@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import bgImage from './bg-image.png';
-import retained from './Retained.png';
+import retained from './retained.png';
 import sold from './sold.png';
 import readXlsxFile from 'read-excel-file'
 import Integer from 'read-excel-file/commonjs/types/Integer';
