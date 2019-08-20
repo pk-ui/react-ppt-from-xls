@@ -266,7 +266,7 @@ body {
 }
 
 .ownerTableStyle{
-  font-size: calc(10px + 3vmin);
+  font-size: calc(10px + 2vmin);
   color: black;
   background-color: #ccd822; 
 }

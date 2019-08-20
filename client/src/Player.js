@@ -11,6 +11,7 @@ import numeral from 'numeral';
 function Player(props) {
 
     let [player, setPlayer] = useState(props.item);
+    let [loading, setLoading] = useState(false);
 
     function isPriceError(purchasePrice, basePrice) {
         let purchasePriceValue = numeral(purchasePrice).value();
@@ -34,7 +35,7 @@ function Player(props) {
         let basePriceValue = numeral(player.basePrice).value();
 
         if (!isPriceError(player.purchasePrice, player.basePrice) && !isMTPLTeamSelectionError(player.mtplTeamName)) {
-            alert('test');
+
             let row = parseInt(player.id) + 1;
             props.updateCell(
                 'MTPL Players', // sheetName
@@ -59,7 +60,7 @@ function Player(props) {
                                         }
                                     }
                                     )[0];
-                                    let id = parseInt(player.id) - 1;
+                                    let id = parseInt(player.id);
                                     let mtbcTeamPlayerCount = playerData[id].perTeamPlayerCount;
 
                                     let maxAllowedBidOnNextPlayerValue = numeral(mtplTeamName.maxAllowedBidOnNextPlayer).value();
@@ -133,14 +134,14 @@ function Player(props) {
     }
 
     return (
-        <div key={props.id} className="AuctionBody">
 
+        <div key={props.id} className="AuctionBody">
             {player.isExternalPlayer === 'TRUE' ? <div className="externalPlayer"> Associated with Other MN Cricket League(s) </div> : ''}
 
             <div>
                 <span className="basePrice">Base Price : {player.basePrice}</span>
                 <span className="lockInfo">
-                    {player.purchasePrice ?
+                    {!loading && player.purchasePrice ?
                         <label>
                             <input className="checkBox" type="checkbox" checked={player.lockPrice} onChange={(event) => {
                                 if (!isPriceError(player.purchasePrice, player.basePrice)) {
@@ -151,18 +152,15 @@ function Player(props) {
                         </label>
                         : ''}
                     <span>&nbsp;</span>
-                    {player.mtplTeamName.value ?
+                    {!loading && player.mtplTeamName &&
                         <label>
                             <input className="checkBox" type="checkbox" checked={player.lockMtplTeamName} onChange={(event) => {
-                                let mtplTeam = player.mtplTeamName;
-                                if (!isMTPLTeamSelectionError(mtplTeam.value)) {
-                                    setPlayer({ ...player, "lockMtplTeamName": event.target.checked, "mtplTeamName": mtplTeam, "isBidSuccess": false });
-                                }
+                                setPlayer({ ...player, "lockMtplTeamName": event.target.checked, "mtplTeamName": player.mtplTeamName, "isBidSuccess": false });
                             }}
                             />
                             <span>Lock Team</span>
                         </label>
-                        : ''}
+                    }
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 </span>
             </div>
@@ -202,7 +200,7 @@ function Player(props) {
                                     value={player.mtplTeamName.value}
                                     options={player.teamOptions}
                                     onChange={(selectedOption) => {
-                                        console.log(selectedOption);
+                                        setLoading(true);
                                         player.mtplTeamName = selectedOption;
 
                                         Tabletop.init({
@@ -217,6 +215,7 @@ function Player(props) {
                                                 )[0];
 
                                                 setPlayer({ ...player, ["mtplTeamName"]: selectedOption.label, ["ownerTeam"]: mtplTeam });
+                                                setLoading(false);
                                             },
                                             simpleSheet: false
                                         });
@@ -228,7 +227,7 @@ function Player(props) {
                             <div className="nextRow"></div>
                         </div>
                     }
-
+                    {loading && <img src={retained} />}
                     <div className="nextRow"></div>
 
                     {player.lockPrice ? <label>
