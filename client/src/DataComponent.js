@@ -55,10 +55,14 @@ class DataComponent extends Component {
       playerProfile.batPoints = playersData[i][29];
       playerProfile.bowlPoints = playersData[i][30];
       playerProfile.fieldPoints = playersData[i][31];
+      playerProfile.bidTeamName = playersData[i][32];
+      playerProfile.bidPlaced = playersData[i][33];
       playerProfile.mtplTeams = this.populateTeams(mtplTeams);
       playerProfile.teamOptions = this.teamOptions(playerProfile.id, mtplTeams);
       playerProfile.lockPrice = playerProfile.status != 'Sold' ? false : true;
       playerProfile.lockMtplTeamName = playerProfile.status != 'Sold' ? false : true;
+      playerProfile.isBidSuccess = playerProfile.status != 'Sold' ? false : true;
+      playerProfile.ownerTeam = {};
       returnData.push(playerProfile);
     }
     return returnData;

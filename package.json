@@ -1,35 +1,21 @@
 {
   "name": "react-ppt-from-xls",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "pptxgenjs": "^2.5.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1",
-    "reactstrap": "^8.0.1",
-    "read-excel-file": "^4.0.2",
-    "xlsx": "^0.15.0"
-  },
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build --prefix client && npm start --prefix server"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "react-google-sheets": "^0.4.0",
+    "react-select": "^3.0.4"
   }
 }

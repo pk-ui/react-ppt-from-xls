@@ -1,18 +1,19 @@
 {
   "files": {
-    "main.css": "/static/css/main.fcf5c02a.chunk.css",
-    "main.js": "/static/js/main.29da1db0.chunk.js",
-    "main.js.map": "/static/js/main.29da1db0.chunk.js.map",
+    "main.css": "/static/css/main.3d43ed88.chunk.css",
+    "main.js": "/static/js/main.5c2e04c4.chunk.js",
+    "main.js.map": "/static/js/main.5c2e04c4.chunk.js.map",
     "runtime~main.js": "/static/js/runtime~main.a8a9905a.js",
     "runtime~main.js.map": "/static/js/runtime~main.a8a9905a.js.map",
-    "static/js/2.a2e330e0.chunk.js": "/static/js/2.a2e330e0.chunk.js",
-    "static/js/2.a2e330e0.chunk.js.map": "/static/js/2.a2e330e0.chunk.js.map",
+    "static/js/2.c3be828a.chunk.js": "/static/js/2.c3be828a.chunk.js",
+    "static/js/2.c3be828a.chunk.js.map": "/static/js/2.c3be828a.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.93f8f23eeef9f6733b4166f2b5784101.js": "/precache-manifest.93f8f23eeef9f6733b4166f2b5784101.js",
+    "precache-manifest.856bb6a0ca2eb6e236f8efc07ea32aba.js": "/precache-manifest.856bb6a0ca2eb6e236f8efc07ea32aba.js",
     "service-worker.js": "/service-worker.js",
-    "static/css/main.fcf5c02a.chunk.css.map": "/static/css/main.fcf5c02a.chunk.css.map",
+    "static/css/main.3d43ed88.chunk.css.map": "/static/css/main.3d43ed88.chunk.css.map",
     "static/media/bg-image.png": "/static/media/bg-image.a6acb911.png",
     "static/media/App.css": "/static/media/cricket_stadium.729adf05.png",
+    "static/media/owner.png": "/static/media/owner.0c63144f.png",
     "static/media/retained.png": "/static/media/retained.84e70c63.png",
     "static/media/sold.png": "/static/media/sold.6e4297b7.png"
   }

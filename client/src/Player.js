@@ -4,10 +4,133 @@ import retained from './images/retained.png';
 import sold from './images/sold.png';
 import Select from 'react-select';
 import './App.css';
+import Tabletop from 'tabletop';
+import * as Constants from './Constants'
+import numeral from 'numeral';
 
 function Player(props) {
 
     let [player, setPlayer] = useState(props.item);
+
+    function isPriceError(purchasePrice, basePrice) {
+        let purchasePriceValue = numeral(purchasePrice).value();
+        let basePriceValue = numeral(basePrice).value();
+        if (purchasePriceValue < basePriceValue) {
+            alert('Purchase Price is less than the Base Price');
+            return true;
+        }
+        return false;
+    }
+
+    function isMTPLTeamSelectionError(mtplTeamName) {
+        if (!mtplTeamName) {
+            alert('MTPL Team Not Selected');
+            return true;
+        }
+        return false;
+    }
+    function handleBid(e) {
+        let purchasePriceValue = numeral(player.purchasePrice).value();
+        let basePriceValue = numeral(player.basePrice).value();
+
+        if (!isPriceError(player.purchasePrice, player.basePrice) && !isMTPLTeamSelectionError(player.mtplTeamName)) {
+            alert('test');
+            let row = parseInt(player.id) + 1;
+            props.updateCell(
+                'MTPL Players', // sheetName
+                'AG', // column
+                row, // row
+                player.mtplTeamName, // value
+                (success) => {
+                    props.updateCell(
+                        'MTPL Players', // sheetName
+                        'AH', // column
+                        row, // row
+                        'Placed', // value
+                        (success) => {
+                            Tabletop.init({
+                                key: Constants.MTPL_MENS_SPREADSHEET_ID,
+                                callback: googleData => {
+                                    let playerData = googleData["MTPL Players"].elements;
+                                    let mtplTeamData = googleData["MTPL Teams"].elements;
+                                    const mtplTeamName = mtplTeamData.filter((team) => {
+                                        if (team.franchiseTeam === player.mtplTeamName) {
+                                            return team;
+                                        }
+                                    }
+                                    )[0];
+                                    let id = parseInt(player.id) - 1;
+                                    let mtbcTeamPlayerCount = playerData[id].perTeamPlayerCount;
+
+                                    let maxAllowedBidOnNextPlayerValue = numeral(mtplTeamName.maxAllowedBidOnNextPlayer).value();
+
+                                    if (purchasePriceValue >= basePriceValue && purchasePriceValue <= maxAllowedBidOnNextPlayerValue && mtbcTeamPlayerCount <= 3) {
+                                        setPlayer({ ...player, "isBidSuccess": true });
+                                    } else {
+                                        props.updateCell(
+                                            'MTPL Players', // sheetName
+                                            'AG', // column
+                                            row, // row
+                                            '', // value
+                                            null, // successCallback
+                                            (error) => {
+                                                console.log('error', error)
+                                            } // errorCallback
+                                        );
+                                        props.updateCell(
+                                            'MTPL Players', // sheetName
+                                            'AH', // column
+                                            row, // row
+                                            '', // value
+                                            null, // successCallback
+                                            (error) => {
+                                                console.log('error', error)
+                                            } // errorCallback
+                                        );
+                                        alert('Max Number of Players limit reached for the Team: ' + player.mtbcTeamName);
+                                    }
+                                },
+                                simpleSheet: false
+                            });
+                        }, // successCallback
+                        (error) => {
+                            console.log('error', error)
+                        } // errorCallback
+                    );
+                }, // successCallback
+                (error) => {
+                    console.log('error', error)
+                } // errorCallback
+            );
+
+        }
+
+    }
+
+    function handleSubmit() {
+        let row = parseInt(player.id) + 1;
+        props.updateCell(
+            'MTPL Players', // sheetName
+            'G', // column
+            row, // row
+            player.mtplTeamName, // value
+            null, // successCallback
+            (error) => {
+                console.log('error', error)
+            } // errorCallback
+        );
+        props.updateCell(
+            'MTPL Players', // sheetName
+            'I', // column
+            row, // row
+            player.purchasePrice, // value
+            null, // successCallback
+            (error) => {
+                console.log('error', error)
+            } // errorCallback
+        );
+        setPlayer({ ...player, 'status': 'Sold' });
+    }
 
     return (
         <div key={props.id} className="AuctionBody">
@@ -17,19 +140,30 @@ function Player(props) {
             <div>
                 <span className="basePrice">Base Price : {player.basePrice}</span>
                 <span className="lockInfo">
-                    <label>
-                        <input className="checkBox" type="checkbox" checked={player.lockPrice} onChange={(event) => {
-                            setPlayer({ ...player, "lockPrice": event.target.checked });
-                        }} />
-                        <span>Lock Price</span>
-                    </label>
+                    {player.purchasePrice ?
+                        <label>
+                            <input className="checkBox" type="checkbox" checked={player.lockPrice} onChange={(event) => {
+                                if (!isPriceError(player.purchasePrice, player.basePrice)) {
+                                    setPlayer({ ...player, "lockPrice": event.target.checked, "isBidSuccess": false });
+                                }
+                            }} />
+                            <span>Lock Price</span>
+                        </label>
+                        : ''}
                     <span>&nbsp;</span>
-                    <label>
-                        <input className="checkBox" type="checkbox" checked={player.lockMtplTeamName} onChange={(event) => {
-                            setPlayer({ ...player, "lockMtplTeamName": event.target.checked, ["mtplTeamName"]: player.mtplTeamName });
-                        }} />
-                        <span>Lock Team</span>
-                    </label>
+                    {player.mtplTeamName.value ?
+                        <label>
+                            <input className="checkBox" type="checkbox" checked={player.lockMtplTeamName} onChange={(event) => {
+                                let mtplTeam = player.mtplTeamName;
+                                if (!isMTPLTeamSelectionError(mtplTeam.value)) {
+                                    setPlayer({ ...player, "lockMtplTeamName": event.target.checked, "mtplTeamName": mtplTeam, "isBidSuccess": false });
+                                }
+                            }}
+                            />
+                            <span>Lock Team</span>
+                        </label>
+                        : ''}
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 </span>
             </div>
 
@@ -42,24 +176,63 @@ function Player(props) {
                     <div className="playerInfo whiteColor"><span>MTBC Team: {player.mtbcTeamName}</span></div>
                 </div>
             </div>
-            <div className="holdMTPLSpace" />
+
+            {player.ownerTeam.franchiseTeam ? <div className="holdEmptySpace" /> : <div className="holdMoreEmptySpace" />}
 
             {player.status === 'Sold' ?
-            <div className="soldCarousel">
-                <div className="sold">
-                    {player.isRetainedPlayer === 'TRUE' ? <img src={retained} className="soldImage" /> : ''}
-                    {player.isOwnerPlayer === 'TRUE' ? <img src={owner} className="soldImage" /> : ''}
-                    {player.status === 'Sold' ? <img src={sold} className="soldImage" /> : ''}
-                    <div>
-                    <span>Price : {player.purchasePrice}</span>
-                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <span>{player.mtplTeamName}</span>
+                <div className="soldCarousel">
+                    <div className="sold">
+                        {player.isRetainedPlayer === 'TRUE' ? <img src={retained} className="soldImage" /> : ''}
+                        {player.isOwnerPlayer === 'TRUE' ? <img src={owner} className="soldImage" /> : ''}
+                        {player.status === 'Sold' ? <img src={sold} className="soldImage" /> : ''}
+                        <div>
+                            <span>Price : {player.purchasePrice}</span>
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <span>{player.mtplTeamName}</span>
+                        </div>
                     </div>
                 </div>
-                </div>
                 : <div className="mtplPlayerInfo">
+                    {player.lockMtplTeamName ?
+                        <div>{player.mtplTeamName} </div> :
+                        <div>
+                            <div>
+                                <Select className="mtplTeamSelectBox" name="mtplTeamName"
+                                    defaultValue={player.mtplTeamName.value}
+                                    value={player.mtplTeamName.value}
+                                    options={player.teamOptions}
+                                    onChange={(selectedOption) => {
+                                        console.log(selectedOption);
+                                        player.mtplTeamName = selectedOption;
+
+                                        Tabletop.init({
+                                            key: Constants.MTPL_MENS_SPREADSHEET_ID,
+                                            callback: googleData => {
+                                                let mtplTeamData = googleData["MTPL Teams"].elements;
+                                                const mtplTeam = mtplTeamData.filter((team) => {
+                                                    if (team.franchiseTeam === selectedOption.value) {
+                                                        return team;
+                                                    }
+                                                }
+                                                )[0];
+
+                                                setPlayer({ ...player, ["mtplTeamName"]: selectedOption.label, ["ownerTeam"]: mtplTeam });
+                                            },
+                                            simpleSheet: false
+                                        });
+
+                                    }}
+                                />
+
+                            </div>
+                            <div className="nextRow"></div>
+                        </div>
+                    }
+
+                    <div className="nextRow"></div>
+
                     {player.lockPrice ? <label>
-                        {player.purchasePrice}
+                        PRICE: {player.purchasePrice}
                     </label>
                         :
                         <div>
@@ -73,58 +246,52 @@ function Player(props) {
                         </div>
 
                     }
-                    <div className="nextRow"></div>
-                    {player.lockMtplTeamName ?
-                        <div>{player.mtplTeamName} </div> :
-                        <div>
-                            <div>
-                                <Select className="mtplTeamSelectBox" name="mtplTeamName"
-                                    defaultValue={player.mtplTeamName.value}
-                                    value={player.mtplTeamName.value}
-                                    options={player.teamOptions}
-                                    onChange={(selectedOption) => {
-                                        console.log(selectedOption);
-                                        player.mtplTeamName = selectedOption;
-                                        setPlayer({ ...player, ["mtplTeamName"]: selectedOption.label });
-                                    }}
-                                />
 
+
+
+                    <div>
+                        {player.status !== 'Sold' &&
+                            player.ownerTeam.franchiseTeam ? <div>
+                                <div class="divTable ownerTableStyle" >
+                                    <div class="divTableBody">
+                                        <div class="divTableRow">
+                                            <div class="divTableCell">Team</div>
+                                            <div class="divTableCell">Balance</div>
+                                            <div class="divTableCell">Max Allowed Bid</div>
+                                            <div class="divTableCell">Amount Spent</div>
+                                            <div class="divTableCell">Players Count</div>
+                                            <div class="divTableCell">Rem. Pl Count</div>
+                                        </div>
+                                        <div class="divTableRow">
+                                            <div class="divTableCell">{player.ownerTeam.franchiseTeam}</div>
+                                            <div class="divTableCell">{player.ownerTeam.CurrentBalance}</div>
+                                            <div class="divTableCell">{player.ownerTeam.maxAllowedBidOnNextPlayer}</div>
+                                            <div class="divTableCell">{player.ownerTeam.amountSpent}</div>
+                                            <div class="divTableCell">{player.ownerTeam.playerCount}</div>
+                                            <div class="divTableCell">{player.ownerTeam.remainingPlayerCount}</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="nextRow"></div>
-                        </div>
-                    }
-                    {player.lockMtplTeamName && player.lockPrice && player.status !== 'Sold' ?
+                            : <div></div>
+                        }
+                    </div>
+                    {player.lockMtplTeamName && player.lockPrice && !player.isBidSuccess && player.status !== 'Sold' ?
                         <div>
-                            <button type="submit" className="button" onClick={() => {
-                                let row = parseInt(player.id) + 1
-                                props.updateCell(
-                                    'MTPL Players', // sheetName
-                                    'G', // column
-                                    row, // row
-                                    player.mtplTeamName, // value
-                                    null, // successCallback
-                                    (error) => {
-                                        console.log('error', error)
-                                    } // errorCallback
-                                );
-                                props.updateCell(
-                                    'MTPL Players', // sheetName
-                                    'I', // column
-                                    row, // row
-                                    player.purchasePrice, // value
-                                    null, // successCallback
-                                    (error) => {
-                                        console.log('error', error)
-                                    } // errorCallback
-                                );
-                                setPlayer({ ...player, 'status': 'Sold' });
+                            <button type="submit" className="button" onClick={handleBid}> Place Bid </button>
+                        </div> : ''
+                    }
 
-                            }}> Submit </button>
+                    {player.lockMtplTeamName && player.lockPrice && player.isBidSuccess && player.status !== 'Sold' ?
+                        <div>
+                            <button type="submit" className="button" onClick={handleSubmit}> Submit </button>
                         </div> : ''
                     }
                 </div>
             }
-            <div className="holdEmptySpace" />
+
+            {player.ownerTeam.franchiseTeam ? <div className="holdEmptySpace" /> : <div className="holdMoreEmptySpace" />}
+
             <div className="table">
                 <table >
                     <tr className="tableHeader">

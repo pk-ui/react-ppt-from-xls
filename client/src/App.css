@@ -4,7 +4,6 @@ body {
   background-color: #d8dde9;
   /* Full height */
   height: 100%; 
-
   /* Center and scale the image nicely */
   background-position: center;
   background-repeat: no-repeat;
@@ -12,12 +11,11 @@ body {
 }
 
 .AuctionBody { 
-  margin:10px; /* The image used */
   background-image: url(./images/cricket_stadium.png);
   /* background-color: #d8dde9; */
   /* Full height */
   height: 100%; 
-  min-height: 85vh;
+  min-height: 90vh;
   /* Center and scale the image nicely */
   background-position: center;
   background-repeat: no-repeat;
@@ -26,12 +24,13 @@ body {
 
 .playerName {
   text-align: center; 
-  min-height: 8vh;
+  min-height: 2vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(50px + 2vmin);
+  font-size: calc(40px + 2vmin);
+  font-weight: 400px;
   color: white;
 }
 
@@ -46,18 +45,18 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(20px + 2vmin);
+  font-size: calc(15px + 2vmin);
   color: yellow;
 }
 
 .table {
   text-align: center; 
-  min-height: 4vh;
+  min-height: 2vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(20px + 2vmin);
+  font-size: calc(10px + 1vmin);
   color: white;
   border: #C0C0C0;
   border-block-width: 2px;
@@ -65,11 +64,11 @@ body {
 }
 
 .td {
-  min-height: 4vh;
+  min-height: 1vh;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(20px + 2vmin);
+  font-size: calc(10px + 2vmin);
   color: white;
   width: "30%";
   border: #C0C0C0;
@@ -142,22 +141,31 @@ body {
   justify-content: center;
   font-size: calc(25px + 2vmin);
   color: white;
+  background-color: green; 
 }
-
 
 .holdEmptySpace{
   display: block;
-  min-height: 4vh;
+  min-height: 0.5vh;
+}
+
+.holdMoreEmptySpace{
+  display: block;
+  min-height: 10vh;
 }
 
 .holdMTPLSpace{
   display: block;
-  min-height: 4vh;
+  min-height: 0.5vh;
+}
+
+.holdMoreMTPLSpace{
+  min-height: 5vh;
 }
 
 .nextRow{
   display: block;
-  min-height: 1vh;
+  min-height: 0.5vh;
 }
 
 .mtplInfo {
@@ -172,7 +180,7 @@ body {
 }
 
 .mtplTeamSelectBox {
-  font-size: calc(20px + 2vmin);
+  font-size: calc(15px + 2vmin);
   color: black;
   width: 510px;
 }
@@ -204,9 +212,9 @@ body {
 .basePrice {
   text-align: right;
   vertical-align: middle;
-  min-height: 5vh;
+  min-height: 1vh;
   display: inline-block;
-  font-size: calc(20px + 2vmin);
+  font-size: calc(20px + 1vmin);
   color: black;
   background-color: #e9fa03;
 }
@@ -255,4 +263,41 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+.ownerTableStyle{
+  font-size: calc(10px + 3vmin);
+  color: black;
+  background-color: #ccd822; 
+}
+/* DivTable.com */
+.divTable{
+	display: table;
+  width: 100%;
+  margin:20px auto;
+}
+.divTableRow {
+	display: table-row;
+}
+.divTableHeading {
+	background-color: #EEE;
+	display: table-header-group;
+}
+.divTableCell, .divTableHead {
+	border: 1px solid #999999;
+	display: table-cell;
+	padding: 3px 10px;
+}
+.divTableHeading {
+	background-color: #EEE;
+	display: table-header-group;
+	font-weight: bold;
+}
+.divTableFoot {
+	background-color: #EEE;
+	display: table-footer-group;
+	font-weight: bold;
+}
+.divTableBody {
+	display: table-row-group;
 }
