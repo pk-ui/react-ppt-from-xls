@@ -19,7 +19,7 @@ body {
   /* Center and scale the image nicely */
   background-position: center;
   background-repeat: no-repeat;
-  background-size: auto;
+  background-size: cover;
 }
 
 .playerName {
@@ -30,8 +30,8 @@ body {
   align-items: center;
   justify-content: center;
   font-size: calc(40px + 2vmin);
-  font-weight: 400px;
   color: white;
+  font-weight: bolder;
 }
 
 .paddingPlayer{
@@ -46,7 +46,8 @@ body {
   align-items: center;
   justify-content: center;
   font-size: calc(15px + 2vmin);
-  color: yellow;
+  color: black;
+  font-weight: bold
 }
 
 .table {
@@ -270,6 +271,30 @@ body {
   color: black;
   background-color: #ccd822; 
 }
+
+.logoImage {
+  height: 16vh;
+  width: 20vh;
+  padding: 2vh;
+}
+
+.ourImage {
+  height: 20vh;
+  width: 26vh;
+  padding: 2vh;
+}
+
+.logosTable{
+	display: table;
+  width: 80%;
+  margin:0px auto;
+}
+.logoTableCell, .divTableHead {
+	border: 0px solid #999999;
+	display: table-cell;
+	padding: 3px 10px;
+}
+
 /* DivTable.com */
 .divTable{
 	display: table;
@@ -301,3 +326,25 @@ body {
 .divTableBody {
 	display: table-row-group;
 }
+
+.example_e {
+  border: none;
+  background: #404040;
+  color: #ffffff !important;
+  font-weight: 100;
+  padding: 20px;
+  text-transform: uppercase;
+  border-radius: 6px;
+  display: inline-block;
+  transition: all 0.3s ease 0s;
+  }
+
+  .example_e:hover {
+    color: #404040 !important;
+    font-weight: 700 !important;
+    letter-spacing: 3px;
+    background: none;
+    -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+    -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+    transition: all 0.3s ease 0s;
+    }

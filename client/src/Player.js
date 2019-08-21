@@ -12,26 +12,30 @@ function Player(props) {
 
     let [player, setPlayer] = useState(props.item);
     let [loading, setLoading] = useState(false);
+    let [bidLoading, setBidLoading] = useState(false);
 
     function isPriceError(purchasePrice, basePrice) {
         let purchasePriceValue = numeral(purchasePrice).value();
         let basePriceValue = numeral(basePrice).value();
         if (purchasePriceValue < basePriceValue) {
+            setBidLoading(false);
             alert('Purchase Price is less than the Base Price');
             return true;
-        }
-        
+        }   
         return false;
     }
 
     function isMTPLTeamSelectionError(mtplTeamName) {
         if (!mtplTeamName) {
+            setBidLoading(false);
             alert('MTPL Team Not Selected');
             return true;
         }
         return false;
     }
+
     function handleBid(e) {
+        setBidLoading(true);
         let purchasePriceValue = numeral(player.purchasePrice).value();
         let basePriceValue = numeral(player.basePrice).value();
 
@@ -67,6 +71,7 @@ function Player(props) {
 
                                     let maxAllowedBidOnNextPlayerValue = numeral(mtplTeamName.maxAllowedBidOnNextPlayer).value();
                                     let remainingPlayerCount = numeral(mtplTeamName.remainingPlayerCount).value();
+                                    setBidLoading(false);
                                     if (purchasePriceValue >= basePriceValue && purchasePriceValue <= maxAllowedBidOnNextPlayerValue 
                                         && mtbcTeamPlayerCount <= 3 && remainingPlayerCount > 0 && purchasePriceValue >= basePriceValue) {
                                         setPlayer({ ...player, "isBidSuccess": true });
@@ -127,9 +132,7 @@ function Player(props) {
                     console.log('error', error)
                 } // errorCallback
             );
-
         }
-
     }
 
     function handleSubmit() {
@@ -208,7 +211,7 @@ function Player(props) {
                         {player.isOwnerPlayer === 'TRUE' ? <img src={owner} className="soldImage" /> : ''}
                         {player.status === 'Sold' ? <img src={sold} className="soldImage" /> : ''}
                         <div>
-                            <span>Price : {player.purchasePrice}</span>
+                            <span>Price : {numeral(player.purchasePrice).format('$ 0,0[.]00')} /-</span>
                             <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                             <span>{player.mtplTeamName}</span>
                         </div>
@@ -252,11 +255,12 @@ function Player(props) {
                         </div>
                     }
                     {loading && <img src="http://giphygifs.s3.amazonaws.com/media/m2NEkszhRmZZ6/giphy.gif" />}
+                    {bidLoading && <img src="https://media.giphy.com/media/z555HIpYq5Pgs/giphy.gif" />}
                     <div className="nextRow"></div>
 
                     { // player.lockPrice 
                         player.lockMtplTeamName ? <label>
-                        PRICE: {player.purchasePrice}
+                        PRICE: {numeral(player.purchasePrice).format('$ 0,0[.]00')} /-
                     </label>
                         :
                         <div>
@@ -300,14 +304,14 @@ function Player(props) {
                             : <div></div>
                         }
                     </div>
-                    {player.lockMtplTeamName //&& player.lockPrice 
+                    {!bidLoading && player.lockMtplTeamName //&& player.lockPrice 
                         && !player.isBidSuccess && player.status !== 'Sold' ?
                         <div>
-                            <button type="submit" className="button" onClick={handleBid}> Place Bid </button>
+                            <button type="submit" className="button" onClick={handleBid}> Request Bid </button>
                         </div> : ''
                     }
-
-                    {player.lockMtplTeamName //&& player.lockPrice 
+                    {player.isBidSuccess && <div>Bid Request : Success </div>}
+                    {!bidLoading && player.lockMtplTeamName //&& player.lockPrice 
                         && player.isBidSuccess && player.status !== 'Sold' ?
                         <div>
                             <button type="submit" className="button" onClick={handleSubmit}> Submit </button>

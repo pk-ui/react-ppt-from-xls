@@ -3,7 +3,7 @@ import * as Constants from './Constants'
 import React, { Component } from 'react';
 import './App.css';
 import Player from './Player.js'
-
+import numeral from 'numeral';
 class DataComponent extends Component {
 
   constructor(props) {
@@ -12,7 +12,7 @@ class DataComponent extends Component {
       sheetLoaded: false
     }
   }
-
+ 
   handleChange = selectedOption => {
     console.log(`Option selected:`, selectedOption);
   };
@@ -29,8 +29,8 @@ class DataComponent extends Component {
       playerProfile.perTeamPlayerCount = playersData[i][4];
       playerProfile.mtbcTeamName = playersData[i][5];
       playerProfile.mtplTeamName = playersData[i][6];
-      playerProfile.basePrice = playersData[i][7];
-      playerProfile.purchasePrice = playersData[i][8];
+      playerProfile.basePrice = numeral(playersData[i][7]).value();
+      playerProfile.purchasePrice = numeral(playersData[i][8]).value();
       playerProfile.status = playersData[i][9];
       playerProfile.isExternalPlayer = playersData[i][10];
       playerProfile.isRetainedPlayer = playersData[i][11];
@@ -138,10 +138,12 @@ class DataComponent extends Component {
 
     return (
       <div>
+
         <ReactGoogleSheets
           clientId={Constants.CLIENT_ID}
           apiKey={Constants.API_KEY}
-          spreadsheetId={Constants.MTPL_MENS_SPREADSHEET_ID}
+          spreadsheetId={this.props.match.params.id === "womens" ? Constants.MTPL_WOMENS_SPREADSHEET_ID : Constants.MTPL_MENS_SPREADSHEET_ID}
+
           afterLoading={() => this.setState({ sheetLoaded: true })}
         >
           {this.state.sheetLoaded ? this.retrieveAuctionData().players.map((item, key) =>
