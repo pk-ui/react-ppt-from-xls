@@ -62,6 +62,7 @@ class DataComponent extends Component {
       playerProfile.lockPrice = playerProfile.status != 'Sold' ? false : true;
       playerProfile.lockMtplTeamName = playerProfile.status != 'Sold' ? false : true;
       playerProfile.isBidSuccess = playerProfile.status != 'Sold' ? false : true;
+      playerProfile.isAvailable = playersData[i][34];
       playerProfile.ownerTeam = {};
       returnData.push(playerProfile);
     }
@@ -123,7 +124,7 @@ class DataComponent extends Component {
   teamOptions = (id, mtplTeams) => {
     let returnData = [];
     let teams = mtplTeams.data;
-    for (let i = 3; i < teams.length; i++) {
+    for (let i = 0; i < teams.length; i++) {
       let teamInfo = {};
       //teamInfo.value = id + '-' + teams[i][0];
       teamInfo.value = teams[i][0];
@@ -144,9 +145,11 @@ class DataComponent extends Component {
           afterLoading={() => this.setState({ sheetLoaded: true })}
         >
           {this.state.sheetLoaded ? this.retrieveAuctionData().players.map((item, key) =>
-            <div className="paddingPlayer">
-              <Player item={item} id={key} updateCell={this.props.updateCell} />
-            </div>
+            item.isAvailable === 'Y' ?
+              <div className="paddingPlayer">
+                <Player item={item} id={key} updateCell={this.props.updateCell} />
+              </div>
+              : ""
           ) : 'loading...'}
         </ReactGoogleSheets>
 

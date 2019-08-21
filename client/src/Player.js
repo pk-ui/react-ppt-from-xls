@@ -20,6 +20,7 @@ function Player(props) {
             alert('Purchase Price is less than the Base Price');
             return true;
         }
+        
         return false;
     }
 
@@ -60,12 +61,14 @@ function Player(props) {
                                         }
                                     }
                                     )[0];
-                                    let id = parseInt(player.id);
+                                    console.log("Player ID: ", player);
+                                    let id = parseInt(player.id)-1;
                                     let mtbcTeamPlayerCount = playerData[id].perTeamPlayerCount;
 
                                     let maxAllowedBidOnNextPlayerValue = numeral(mtplTeamName.maxAllowedBidOnNextPlayer).value();
-
-                                    if (purchasePriceValue >= basePriceValue && purchasePriceValue <= maxAllowedBidOnNextPlayerValue && mtbcTeamPlayerCount <= 3) {
+                                    let remainingPlayerCount = numeral(mtplTeamName.remainingPlayerCount).value();
+                                    if (purchasePriceValue >= basePriceValue && purchasePriceValue <= maxAllowedBidOnNextPlayerValue 
+                                        && mtbcTeamPlayerCount <= 3 && remainingPlayerCount > 0 && purchasePriceValue >= basePriceValue) {
                                         setPlayer({ ...player, "isBidSuccess": true });
                                     } else {
                                         props.updateCell(
@@ -88,8 +91,29 @@ function Player(props) {
                                                 console.log('error', error)
                                             } // errorCallback
                                         );
-                                        alert('Max Number of Players limit reached for the Team: ' + player.mtbcTeamName);
-                                    }
+
+                                        if (purchasePriceValue < basePriceValue) {
+                                            alert('Purchase Price is less than the Base Price');
+                                            return true;
+                                        }
+
+                                        if(mtbcTeamPlayerCount > 3) {
+                                            alert('Max Number of Players limit reached for the Team: ' + player.mtbcTeamName);
+                                            return;
+                                        }
+                                        if(purchasePriceValue > maxAllowedBidOnNextPlayerValue) {
+                                            alert('Purchase Price is more than the maxAllowed Bid for this Player');
+                                            return;
+                                        }
+                                        if(purchasePriceValue < basePriceValue) {
+                                            alert('Purchse Price is less than Base Price');
+                                            return;
+                                        }
+                                        if(remainingPlayerCount <= 0) {
+                                            alert('Max no. of Players Selected already for the Team: ' + player.mtplTeamName);
+                                            return;
+                                        }
+                                    }   
                                 },
                                 simpleSheet: false
                             });
@@ -139,9 +163,9 @@ function Player(props) {
             {player.isExternalPlayer === 'TRUE' ? <div className="externalPlayer"> Associated with Other MN Cricket League(s) </div> : ''}
 
             <div>
-                <span className="basePrice">Base Price : {player.basePrice}</span>
+                <span className="basePrice">Base Price : {player.basePrice} /-</span>
                 <span className="lockInfo">
-                    {!loading && player.purchasePrice ?
+                    {false && !loading && player.purchasePrice ?
                         <label>
                             <input className="checkBox" type="checkbox" checked={player.lockPrice} onChange={(event) => {
                                 if (!isPriceError(player.purchasePrice, player.basePrice)) {
@@ -158,7 +182,7 @@ function Player(props) {
                                 setPlayer({ ...player, "lockMtplTeamName": event.target.checked, "mtplTeamName": player.mtplTeamName, "isBidSuccess": false });
                             }}
                             />
-                            <span>Lock Team</span>
+                            <span>Lock</span>
                         </label>
                     }
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -227,10 +251,11 @@ function Player(props) {
                             <div className="nextRow"></div>
                         </div>
                     }
-                    {loading && <img src={retained} />}
+                    {loading && <img src="http://giphygifs.s3.amazonaws.com/media/m2NEkszhRmZZ6/giphy.gif" />}
                     <div className="nextRow"></div>
 
-                    {player.lockPrice ? <label>
+                    { // player.lockPrice 
+                        player.lockMtplTeamName ? <label>
                         PRICE: {player.purchasePrice}
                     </label>
                         :
@@ -249,7 +274,7 @@ function Player(props) {
 
 
                     <div>
-                        {player.status !== 'Sold' &&
+                        {player.status !== 'Sold' && !player.lockMtplTeamName && //!player.lockPrice &&
                             player.ownerTeam.franchiseTeam ? <div>
                                 <div class="divTable ownerTableStyle" >
                                     <div class="divTableBody">
@@ -275,13 +300,15 @@ function Player(props) {
                             : <div></div>
                         }
                     </div>
-                    {player.lockMtplTeamName && player.lockPrice && !player.isBidSuccess && player.status !== 'Sold' ?
+                    {player.lockMtplTeamName //&& player.lockPrice 
+                        && !player.isBidSuccess && player.status !== 'Sold' ?
                         <div>
                             <button type="submit" className="button" onClick={handleBid}> Place Bid </button>
                         </div> : ''
                     }
 
-                    {player.lockMtplTeamName && player.lockPrice && player.isBidSuccess && player.status !== 'Sold' ?
+                    {player.lockMtplTeamName //&& player.lockPrice 
+                        && player.isBidSuccess && player.status !== 'Sold' ?
                         <div>
                             <button type="submit" className="button" onClick={handleSubmit}> Submit </button>
                         </div> : ''

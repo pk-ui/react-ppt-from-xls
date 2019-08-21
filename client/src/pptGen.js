@@ -2,7 +2,6 @@ import React from 'react';
 import bgImage from './images/bg-image.png';
 import retained from './images/retained.png';
 import sold from './images/sold.png';
-//import preOwned from './images/preOwned.png';
 import readXlsxFile from 'read-excel-file'
 
 var PptxGenJS = require("pptxgenjs");
@@ -94,7 +93,7 @@ function PPTGen() {
             let playerInfo = xcelData[i];
             if (playerInfo.playerId !== 'player_id') {
                 var slide = pptx.addNewSlide();
-                var centerAlignOpts = { x: 1.0, y: 0.2, fontSize: 40, color: '000000', h: 1.4, align: 'center', bold: true };
+                var centerAlignOpts = { x: 1.0, y: 0.2, fontSize: 40, color: 'FFFFFF', h: 1.4, align: 'center', bold: true };
                 var playerRankOpts = { x: 4.0, y: 1.8, fontSize: 16, color: 'FFFF00', bold: true };
                 var playerBasePriceOpts = { x: 6.7, y: 0.3, fontSize: 20, color: '000000', bold: true, w: 3.3, fill: 'FFFF00' };
                 var playerIdOpts = { x: 4.0, y: 2.1, fontSize: 16, color: 'FFFF00', bold: true };
@@ -126,8 +125,8 @@ function PPTGen() {
 
                 if (playerInfo.isExternalPlayer) {
                     // External Player
-                    slide.addText('Associated with Other MN Cricket League(s)', { x: 0, y: 0, fontSize: 10, color: 'C0C0C0', h: 0.3, w: 10, align: 'center', bold: true, fill: 'B22222' });
-                    slide.addText('Associated with Other MN Cricket League(s)', { x: 0, y: 5.33, fontSize: 10, color: 'C0C0C0', h: 0.3, w: 10, align: 'center', bold: true, fill: 'B22222' });
+                    slide.addText('Associated with Other MN Cricket League(s)', { x: 0, y: 0, fontSize: 10, color: 'FFFFFF', h: 0.3, w: 10, align: 'center', bold: true, fill: 'B22222' });
+                    slide.addText('Associated with Other MN Cricket League(s)', { x: 0, y: 5.33, fontSize: 10, color: 'FFFFFF', h: 0.3, w: 10, align: 'center', bold: true, fill: 'B22222' });
                 }
 
                 // Player Name
